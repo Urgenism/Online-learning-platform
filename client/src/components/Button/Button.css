@@ -1,7 +1,7 @@
 .btn {
   border: none;
   color: white;
-  padding: 0.5rem 1.2rem;
+  padding: 0.8rem 1.6rem;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -26,4 +26,9 @@
 
 .btn.blue {
   background-color: var(--clr-blue);
+}
+
+.btn.gray {
+  color: var(--clr-black);
+  background-color: var(--clr-gray);
 }

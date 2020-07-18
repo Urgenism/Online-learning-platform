@@ -1,0 +1,37 @@
+.form {
+  padding: 2rem 3rem;
+}
+
+.form-item:not(:last-child) {
+  margin-bottom: 2rem;
+}
+
+.form-item__label {
+  display: block;
+}
+
+.form-item__label small {
+  color: var(--clr-danger);
+}
+
+.form-item__error {
+  color: var(--clr-danger);
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  font-style: italic;
+}
+
+.form-item__input {
+  width: 100%;
+  border: 1px solid var(--clr-gray);
+  padding: 0.8rem 1.2rem;
+  font-size: 1.4rem;
+}
+
+.form__button {
+  text-align: right;
+}
+
+.form__button .btn:first-child {
+  margin-right: 1rem;
+}
