@@ -1,0 +1,24 @@
+.courses {
+  background: var(--clr-white);
+  height: 100vh;
+  padding: 2rem;
+  margin: 2rem 1.5rem;
+}
+
+.courses__title-wrap {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.courses__title {
+  font-size: 1.8rem;
+  color: var(--clr-black);
+  text-transform: uppercase;
+}
+
+.courses__list {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}

@@ -1,0 +1,24 @@
+.breadcrumb {
+  margin: 2rem;
+}
+
+.breadcrumb__item {
+  display: inline;
+}
+
+.breadcrumb__list .breadcrumb__item + .breadcrumb__item:before {
+  padding: 0.6rem;
+  color: black;
+  content: "/\00a0";
+}
+
+.breadcrumb__link {
+  text-decoration: none;
+  text-transform: uppercase;
+  color: var(--clr-primary);
+  font-size: 1.4rem;
+}
+
+.breadcrumb__link:hover {
+  text-decoration: underline;
+}

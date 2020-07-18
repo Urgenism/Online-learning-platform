@@ -1,0 +1,29 @@
+.btn {
+  border: none;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1.4rem;
+  line-height: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn.primary {
+  background-color: var(--clr-primary--dark); /* Green */
+}
+
+.btn.danger {
+  background-color: var(--clr-danger);
+}
+
+.btn.blue {
+  background-color: var(--clr-blue);
+}

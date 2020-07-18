@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header .header__profile {
+  width: 50px;
+}
+
+.header .header__profile-img {
+  border-radius: 10px;
+}
+
+.header .header__logo {
+  width: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.header .header__brand-name {
+  margin-left: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--clr-primary--dark);
+}

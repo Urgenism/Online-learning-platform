@@ -1,0 +1,16 @@
+.table {
+  width: 100%;
+  font-size: 1.4rem;
+}
+
+.table__header-col {
+  border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+  color: var(--clr-primary);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.table__cell {
+  text-align: left;
+  padding: 1rem;
+}
