@@ -27,7 +27,6 @@ function reducer(state: typeof initialState, action: any) {
     case "FETCH_COURSES_START":
       return { ...state, courses: { ...state.courses, loading: true } };
     case "FETCH_COURSES_SUCCESS":
-      console.log("success");
       return {
         ...state,
         courses: { ...state.courses, data: action.payload, loading: false },
