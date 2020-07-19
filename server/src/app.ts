@@ -1,8 +1,10 @@
 import express, { Request, Response } from "express";
+import path from "path";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
 import coursesRoute from "./routes/courses";
+import filesRoute from "./routes/files";
 const app = express();
 
 const dbURI =
@@ -10,12 +12,14 @@ const dbURI =
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Hello World! fuck");
 });
 
 app.use("/courses", coursesRoute);
+app.use("/files", filesRoute);
 
 mongoose
   .connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
