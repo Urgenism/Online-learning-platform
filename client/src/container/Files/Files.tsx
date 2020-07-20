@@ -11,8 +11,12 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineDownload } from "react-icons/ai";
 import { RiFileList3Line } from "react-icons/ri";
+import { stat } from "fs";
 
 const filesApi = new ApiService({});
+const filesPostApi = new ApiService({
+  headers: { "Content-Type": "multipart/form-data" },
+});
 
 const initialState = { showModal: false, files: [], tableData: [] };
 
@@ -57,7 +61,12 @@ function reducer(state: typeof initialState, action: any) {
     case "CLOSE_MODAL":
       return { ...state, showModal: false };
     case "POPULATE_TABLE_DATA": {
-      return { ...state, tableData: action.payload };
+      return {
+        ...state,
+        tableData: action.payload,
+        showModal: false,
+        files: [],
+      };
     }
     case "SET_FILES": {
       let filesNames: any = [];
@@ -95,13 +104,6 @@ function reducer(state: typeof initialState, action: any) {
       let filesNames: any = [];
       let updatedFiles = state.files.map((file: any, index) => {
         if (index === action.payload.fileIndex) {
-          // const fileExtension = file.name.split(".")[1];
-          // const fileType = file.type;
-          // // const blob = file.slice(0, file.size, fileType);
-          // const updatedFile = new File(
-          //   [file],
-          //   `${action.payload.fileName}.${fileExtension}`,
-          //   { type: `${fileType}` }
           filesNames.push(action.payload.fileName.trim());
           return { ...file, fileName: action.payload.fileName };
         }
@@ -193,7 +195,52 @@ const Files: React.FC<TProps> = (props) => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log("handleSUbmit");
+    const DataWithoutError = state.files.every((item: any) => !item.error);
+
+    if (DataWithoutError) {
+      const formData = new FormData();
+      const { id: courseId }: any = props.match.params;
+      formData.append("courseId", courseId);
+      for (let element of state.files) {
+        console.log(element.file.name);
+        const _splittedFileName = element.file.name.split(".");
+        const fileName = _splittedFileName
+          .slice(0, _splittedFileName.length - 1)
+          .join(".");
+
+        if (fileName === element.fileName) {
+          formData.append("files", element.file);
+        } else {
+          const fileType = element.file.type;
+          const updatedFile = new File(
+            [element.file],
+            `${element.fileName}.${element.fileExtension}`,
+            { type: `${fileType}` }
+          );
+          formData.append("files", updatedFile);
+        }
+      }
+
+      filesPostApi
+        .post("/files/upload", formData)
+        .then((response: any) => {
+          const formattedTableData = response.data.files.map((file: any) => ({
+            name: { name: file.fileName, path: file.filePath },
+            dateAdded: response.data.createdAt.split("T")[0],
+            lastModified: response.data.updatedAt.split("T")[0],
+            size: file.fileSize,
+            // path: file.filePath,
+          }));
+          dispatch({
+            type: "POPULATE_TABLE_DATA",
+            payload: formattedTableData,
+          });
+          toast.success("File successfully uploaded!");
+        })
+        .catch((err: AxiosError) => {
+          console.log(err);
+        });
+    }
   };
 
   return (

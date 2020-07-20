@@ -17,19 +17,6 @@ const storage = multer.diskStorage({
 
 var upload = multer({
   storage: storage,
-  // fileFilter: (req, file, cb) => {
-  //   console.log("upload");
-  //   if (
-  //     file.mimetype == "image/png" ||
-  //     file.mimetype == "image/jpg" ||
-  //     file.mimetype == "image/jpeg"
-  //   ) {
-  //     cb(null, true);
-  //   } else {
-  //     cb(null, false);
-  //     return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
-  //   }
-  // },
 });
 
 router.post(
@@ -54,6 +41,8 @@ router.post(
         files: reqFiles,
       };
 
+      // console.log(postData);
+
       let oldData = await Files.find({
         courseId: req.body.courseId,
       });
@@ -68,10 +57,7 @@ router.post(
           }
         );
       } else {
-        postFiles = new Files({
-          courseId: req.body.courseId,
-          filePaths: reqFiles,
-        });
+        postFiles = new Files(postData);
       }
 
       let savedFiles = await postFiles.save();
