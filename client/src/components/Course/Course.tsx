@@ -3,6 +3,7 @@ import "./Course.css";
 import { Link } from "react-router-dom";
 
 type TProps = {
+  _id: String;
   courseName: String;
   programName: String;
   semester: String;
@@ -12,6 +13,7 @@ type TProps = {
 };
 
 const Course: React.FC<TProps> = ({
+  _id,
   courseName,
   programName,
   semester,
@@ -30,7 +32,7 @@ const Course: React.FC<TProps> = ({
           Start Date: {startDate.split("T")[0]}
         </p>
         <div className='course__btns'>
-          <Link to='/files' className='btn primary'>
+          <Link to={`courses/${_id}/files`} className='btn primary'>
             Add Files
           </Link>
           <button className='btn blue' onClick={editCourseHandler}>

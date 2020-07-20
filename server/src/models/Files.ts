@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const FilesSchema = new mongoose.Schema(
   {
-    filePaths: {
+    files: {
       type: Array,
       required: true,
     },

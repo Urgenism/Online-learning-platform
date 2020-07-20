@@ -14,3 +14,11 @@
   text-align: left;
   padding: 1rem;
 }
+
+.table__download-btn {
+  color: var(--clr-primary);
+  font-size: 2rem;
+  margin-left: 1rem;
+  display: inline-block;
+  vertical-align: middle;
+}

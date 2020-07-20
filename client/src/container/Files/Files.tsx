@@ -1,12 +1,20 @@
-import React, { useReducer, ChangeEvent, FormEvent } from "react";
+import React, { useReducer, ChangeEvent, FormEvent, useEffect } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import Breadcrumb from "components/Breadcrumb/Breadcrumb";
 import "./Files.css";
 import Button from "components/Button/Button";
 import Modal from "components/Modal/Modal";
 import Table from "components/Table/Table";
 import FileDropzone from "components/FileDropzone/FIleDropzone";
+import ApiService from "services/Apis";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { AiOutlineDownload } from "react-icons/ai";
+import { RiFileList3Line } from "react-icons/ri";
 
-const initialState = { showModal: false, files: [] };
+const filesApi = new ApiService({});
+
+const initialState = { showModal: false, files: [], tableData: [] };
 
 const supportedFileTypes = [
   "jpeg",
@@ -21,7 +29,7 @@ const supportedFileTypes = [
 
 const findDuplicate = (arr: Array<any>) => {
   return arr.reduce((acc, currentValue, index, array) => {
-    if (array.indexOf(currentValue) != index && !acc.includes(currentValue))
+    if (array.indexOf(currentValue) !== index && !acc.includes(currentValue))
       acc.push(currentValue);
     return acc;
   }, []);
@@ -48,6 +56,9 @@ function reducer(state: typeof initialState, action: any) {
       return { ...state, showModal: true };
     case "CLOSE_MODAL":
       return { ...state, showModal: false };
+    case "POPULATE_TABLE_DATA": {
+      return { ...state, tableData: action.payload };
+    }
     case "SET_FILES": {
       let filesNames: any = [];
       let files = action.payload.map((file: any) => {
@@ -108,32 +119,51 @@ function reducer(state: typeof initialState, action: any) {
   }
 }
 
-const Files = () => {
+interface TProps extends RouteComponentProps {}
+
+const Files: React.FC<TProps> = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const data = React.useMemo(
-    () => [
-      {
-        name: "File example.xlsx",
-        dateAdded: "jun 10, 2020",
-        lastModified: "jun 10, 2020",
-        size: "41.67kb",
-      },
-      {
-        name: "File example.xlsx",
-        dateAdded: "jun 10, 2020",
-        lastModified: "jun 10, 2020",
-        size: "41.67kb",
-      },
-    ],
-    []
-  );
+  useEffect(() => {
+    const { id: courseId }: any = props.match.params;
+    filesApi
+      .get(`/files/courseId/${courseId}`)
+      .then((response: any) => {
+        if (response) {
+          const formattedTableData = response.files.map((file: any) => ({
+            name: { name: file.fileName, path: file.filePath },
+            dateAdded: response.createdAt.split("T")[0],
+            lastModified: response.updatedAt.split("T")[0],
+            size: file.fileSize,
+            // path: file.filePath,
+          }));
+          dispatch({
+            type: "POPULATE_TABLE_DATA",
+            payload: formattedTableData,
+          });
+        }
+      })
+      .catch((err: AxiosError) => {
+        console.log(err);
+        toast.error("Unable to fetch files data");
+      });
+  }, [props.match.params]);
 
   const columns = React.useMemo(
     () => [
       {
         Header: "Name",
-        accessor: "name", // accessor is the "key" in the data
+        accessor: "name",
+        Cell: (cellInfo: any) => {
+          return (
+            <div>
+              {cellInfo.value.name}
+              <a href={cellInfo.value.path} className='table__download-btn'>
+                <AiOutlineDownload />
+              </a>
+            </div>
+          );
+        },
       },
       {
         Header: "Date Added",
@@ -196,7 +226,10 @@ const Files = () => {
       <main className='files'>
         <aside className='files__sidebar'>
           <ul className='files__sidebar-list'>
-            <li className='files__sidebar-item active'>Files</li>
+            <li className='files__sidebar-item active'>
+              <RiFileList3Line className='files__sidebar-icon' />
+              Files
+            </li>
           </ul>
         </aside>
         <div className='files__content'>
@@ -209,7 +242,7 @@ const Files = () => {
             ></Button>
           </div>
           <div className='files__table-wrapper'>
-            <Table data={data} columns={columns} />
+            <Table data={state.tableData} columns={columns} />
           </div>
         </div>
       </main>

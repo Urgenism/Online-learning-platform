@@ -1,6 +1,7 @@
 import React from "react";
 import ReactModal from "react-modal";
 import "./Modal.css";
+import { GrClose } from "react-icons/gr";
 
 type TProps = {
   showModal: boolean;
@@ -31,7 +32,7 @@ const Modal: React.FC<TProps> = ({
       <div className='modal__title-wrap'>
         <h3 className='modal__title'>{modalTitle}</h3>
         <span role='button' className='modal__btn-close' onClick={closeModal}>
-          X
+          <GrClose />
         </span>
       </div>
       {children}

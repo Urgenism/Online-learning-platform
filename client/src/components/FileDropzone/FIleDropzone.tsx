@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, ChangeEvent } from "react";
-import { useDropzone, DropzoneInputProps } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import "./FileDropzone.css";
 
 function formatBytes(bytes: number, decimals = 2) {

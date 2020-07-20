@@ -41,13 +41,17 @@ router.post(
       const url = req.protocol + "://" + req.get("host");
       const filesArray: Record<string, any> = req.files;
       for (var i = 0; i < filesArray.length; i++) {
-        reqFiles.push(url + "/" + filesArray[i].filename);
+        reqFiles.push({
+          filePath: url + "/" + filesArray[i].filename,
+          fileName: filesArray[i].filename,
+          fileSize: filesArray[i].size,
+        });
       }
 
       let postFiles: any;
       const postData = {
         courseId: req.body.courseId,
-        filePaths: reqFiles,
+        files: reqFiles,
       };
 
       let oldData = await Files.find({
@@ -81,9 +85,8 @@ router.post(
 );
 
 router.get("/courseId/:id", async (req: Request, res: Response) => {
-  console.log(req.params.id);
   try {
-    const courses = await Files.find({ courseId: req.params.id });
+    const courses = await Files.findOne({ courseId: req.params.id });
     res.json(courses);
   } catch (err) {
     console.log(err);
