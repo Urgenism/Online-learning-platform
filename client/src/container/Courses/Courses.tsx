@@ -145,24 +145,26 @@ const Courses = () => {
           />
         </div>
         <div className='courses__list'>
-          {state.courses.data.map((course: any) => {
-            return (
-              <Course
-                key={course._id}
-                editCourseHandler={() =>
-                  dispatch({
-                    type: "EDIT_COURSE",
-                    payload: {
-                      ...course,
-                      startDate: course.startDate.split("T")[0],
-                    },
-                  })
-                }
-                deleteCourseHandler={() => deleteCourse(course._id)}
-                {...course}
-              />
-            );
-          })}
+          {state.courses.data.length > 0
+            ? state.courses.data.map((course: any) => {
+                return (
+                  <Course
+                    key={course._id}
+                    editCourseHandler={() =>
+                      dispatch({
+                        type: "EDIT_COURSE",
+                        payload: {
+                          ...course,
+                          startDate: course.startDate.split("T")[0],
+                        },
+                      })
+                    }
+                    deleteCourseHandler={() => deleteCourse(course._id)}
+                    {...course}
+                  />
+                );
+              })
+            : "There is no any course"}
         </div>
       </main>
     </>

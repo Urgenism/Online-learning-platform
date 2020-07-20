@@ -11,14 +11,12 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineDownload } from "react-icons/ai";
 import { RiFileList3Line } from "react-icons/ri";
-import { stat } from "fs";
+import { formatBytes, findDuplicate } from "utils/utils";
 
 const filesApi = new ApiService({});
 const filesPostApi = new ApiService({
   headers: { "Content-Type": "multipart/form-data" },
 });
-
-const initialState = { showModal: false, files: [], tableData: [] };
 
 const supportedFileTypes = [
   "jpeg",
@@ -31,12 +29,15 @@ const supportedFileTypes = [
   "xlsx",
 ];
 
-const findDuplicate = (arr: Array<any>) => {
-  return arr.reduce((acc, currentValue, index, array) => {
-    if (array.indexOf(currentValue) !== index && !acc.includes(currentValue))
-      acc.push(currentValue);
-    return acc;
-  }, []);
+const initialState = { showModal: false, files: [], tableData: [] };
+
+const mapApiDataToTableData = (apiData: any) => {
+  return apiData.files.map((file: any) => ({
+    name: { name: file.fileName, path: file.filePath },
+    dateAdded: apiData.createdAt.split("T")[0],
+    lastModified: apiData.updatedAt.split("T")[0],
+    size: formatBytes(file.fileSize),
+  }));
 };
 
 const validateFiles = (arr: Array<any>, duplicateFileName: Array<any>) => {
@@ -132,13 +133,7 @@ const Files: React.FC<TProps> = (props) => {
       .get(`/files/courseId/${courseId}`)
       .then((response: any) => {
         if (response) {
-          const formattedTableData = response.files.map((file: any) => ({
-            name: { name: file.fileName, path: file.filePath },
-            dateAdded: response.createdAt.split("T")[0],
-            lastModified: response.updatedAt.split("T")[0],
-            size: file.fileSize,
-            // path: file.filePath,
-          }));
+          const formattedTableData = mapApiDataToTableData(response);
           dispatch({
             type: "POPULATE_TABLE_DATA",
             payload: formattedTableData,
@@ -160,7 +155,12 @@ const Files: React.FC<TProps> = (props) => {
           return (
             <div>
               {cellInfo.value.name}
-              <a href={cellInfo.value.path} className='table__download-btn'>
+              <a
+                href={cellInfo.value.path}
+                className='table__download-btn'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 <AiOutlineDownload />
               </a>
             </div>
@@ -201,8 +201,8 @@ const Files: React.FC<TProps> = (props) => {
       const formData = new FormData();
       const { id: courseId }: any = props.match.params;
       formData.append("courseId", courseId);
+
       for (let element of state.files) {
-        console.log(element.file.name);
         const _splittedFileName = element.file.name.split(".");
         const fileName = _splittedFileName
           .slice(0, _splittedFileName.length - 1)
@@ -224,13 +224,7 @@ const Files: React.FC<TProps> = (props) => {
       filesPostApi
         .post("/files/upload", formData)
         .then((response: any) => {
-          const formattedTableData = response.data.files.map((file: any) => ({
-            name: { name: file.fileName, path: file.filePath },
-            dateAdded: response.data.createdAt.split("T")[0],
-            lastModified: response.data.updatedAt.split("T")[0],
-            size: file.fileSize,
-            // path: file.filePath,
-          }));
+          const formattedTableData = mapApiDataToTableData(response.data);
           dispatch({
             type: "POPULATE_TABLE_DATA",
             payload: formattedTableData,
